@@ -11,11 +11,17 @@ const createLead = async (req, res) => {
     if (!email || typeof email !== 'string' || !email.trim()) {
       return res.status(400).json({ message: 'Email is required' });
     }
+    const trimmedEmail = email.trim();
+    // Basic email format validation (avoids obviously invalid input before hitting the DB)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      return res.status(400).json({ message: 'Email is invalid' });
+    }
     const leadStatus = status && STATUS_VALUES.includes(status) ? status : 'New';
     const lead = await prisma.lead.create({
       data: {
         name: name.trim(),
-        email: email.trim(),
+        email: trimmedEmail,
         status: leadStatus,
       },
     });
