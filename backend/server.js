@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
+const { prisma } = require('./db/prisma');
 const leadsRoutes = require('./routes/leads');
 
 const app = express();
@@ -18,12 +18,13 @@ app.use((req, res) => {
 
 async function start() {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await prisma.$connect();
+    console.log('Connected to PostgreSQL');
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (err) {
-    console.error('Failed to connect to MongoDB:', err.message);
+    console.error('Failed to connect to database:', err.message);
     process.exit(1);
   }
 }

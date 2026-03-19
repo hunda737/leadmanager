@@ -1,17 +1,27 @@
-const Lead = require('../models/Lead');
+const { prisma } = require('../db/prisma');
+
+const STATUS_VALUES = ['New', 'Engaged', 'Proposal Sent', 'Closed-Won', 'Closed-Lost'];
 
 const createLead = async (req, res) => {
   try {
-    const lead = await Lead.create(req.body);
+    const { name, email, status } = req.body;
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ message: 'Name is required' });
+    }
+    if (!email || typeof email !== 'string' || !email.trim()) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+    const leadStatus = status && STATUS_VALUES.includes(status) ? status : 'New';
+    const lead = await prisma.lead.create({
+      data: {
+        name: name.trim(),
+        email: email.trim(),
+        status: leadStatus,
+      },
+    });
     res.status(201).json(lead);
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      const message = Object.values(err.errors)
-        .map((e) => e.message)
-        .join('; ');
-      return res.status(400).json({ message: message || 'Validation failed' });
-    }
-    if (err.code === 11000) {
+    if (err.code === 'P2002') {
       return res.status(409).json({ message: 'Email already exists' });
     }
     res.status(500).json({ message: err.message || 'Server error' });
@@ -20,7 +30,9 @@ const createLead = async (req, res) => {
 
 const getLeads = async (req, res) => {
   try {
-    const leads = await Lead.find().sort({ createdAt: -1 });
+    const leads = await prisma.lead.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
     res.status(200).json(leads);
   } catch (err) {
     res.status(500).json({ message: err.message || 'Server error' });

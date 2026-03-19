@@ -1,12 +1,15 @@
 # Lead Management API
 
-REST API for managing leads (Node.js, Express, MongoDB).
+REST API for managing leads (Node.js, Express, Prisma, PostgreSQL).
 
 ## Run locally
 
-1. Copy `.env.example` to `.env` and set `MONGO_URI` (e.g. your MongoDB connection string).
+1. Copy `.env.example` to `.env` and set `DATABASE_URL` to your PostgreSQL connection string.
 2. Install dependencies: `npm install`
-3. Start the server:
+3. Generate Prisma client and run migrations:
+   - `npx prisma generate`
+   - `npx prisma migrate dev` (creates the database schema)
+4. Start the server:
    - Development: `npm run dev`
    - Production: `npm start`
 
