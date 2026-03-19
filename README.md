@@ -33,14 +33,9 @@ The API should be available at:
    - Ensure `frontend/.env` includes:
      - `NEXT_PUBLIC_API_BASE_URL=http://localhost:5000`
 4. Start the dev server
-   - `npm run dev -- --webpack -p 3000`
+   - `npm run dev`
 
 Then open:
 - `http://localhost:3000`
 
-## Notes for Windows (tailwind/Next.js)
-
-- If you see Tailwind/LigthningCSS native binding errors on Windows, install the missing binding:
-  - `npm install lightningcss-win32-x64-msvc@1.32.0 --save-dev`
-- Next.js 16 may default to Turbopack; use `--webpack` if Turbopack isn’t supported in your environment.
 
